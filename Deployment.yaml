@@ -20,8 +20,8 @@ spec:
         image: suajang/introduce_game:latest
         imagePullPolicy: Always
         ports:
-      - containerPort: 5000
-        name: introG
+        - containerPort: 5000
+          name: introG
 ---
 apiVersion: v1
 kind: Service
