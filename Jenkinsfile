@@ -20,15 +20,7 @@ pipeline {
 		  }
 		}
       }
-	  stage('Test image') {
-		steps {
-	      script {
-			app.inside {
-				sh 'npm test'
-			}
-		  }
-		}
-	  }
+	  
 	  stage('push image') {
 		steps {
 		  script {
