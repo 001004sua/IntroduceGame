@@ -6,6 +6,8 @@ metadata:
       app: intro-game
 spec:
   replicas: 3
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: intro-game
