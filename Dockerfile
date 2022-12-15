@@ -1,14 +1,11 @@
-FROM bitnami/node:9 as builder
-ENV NODE_ENV="production"
-
-COPY . /app
-WORKDIR /app
+FROM ubuntu:20.04
+RUN apt-get update && apt-get -y install build-essential && mkdir –p /app
+RUN apt-get -qq install curl --yes
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get -qq install nodejs --yes
 RUN npm install
-
-FROM bitnami/node:9-prod
-ENV NODE_ENV="production"
-COPY --from=builder /app /app
-WORKDIR /app
+COPY . /app/
+WORKDIR /app/
 ENV PORT 5000
 EXPOSE 5000
 
