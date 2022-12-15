@@ -36,4 +36,4 @@ spec:
   selector:
     app: intro-game
     tier: intro-game
-    type: LoadBalancer
+  type: LoadBalancer
