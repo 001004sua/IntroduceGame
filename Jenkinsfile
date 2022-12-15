@@ -1,21 +1,56 @@
-node {
-	def app
-	stage('Clone repository') {
-		git branch: 'main',
-			url: 'https://github.com/001004sua/IntroduceGame.git'
+pipeline {
+	agent any
+	environment {
+      PROJECT_ID = 'first-oss-project'
+	  CLUSTER_NAME = 'kube'
+	  LOCATION = 'asia-northeast3-a'
+	  CREDENTIALS_ID = 'gke'
 	}
-	stage('Build image') {
-		app = docker.build("suajang/introduce_game")
-	}
-	stage('Test image') {
-		app.inside {
-			sh 'npm test'						
+	stages{
+      stage('Clone repository') {
+        steps {
+		  git branch: 'main',
+             url: 'https://github.com/001004sua/IntroduceGame.git'
+        }
+	  }
+	  stage('Build image') {
+		steps {
+	      script {
+		    app = docker.build("suajang/introduce_game:${env.BUILD_ID}")
+		  }
 		}
-	}
-	stage('Push image') {
-		docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-			app.push("${env.BUILD_NUMBER}")
-			app.push("latest")
+      }
+	  stage('Test image') {
+		steps {
+	      script {
+			app.inside {
+				sh 'npm test'
+			}
+		  }
 		}
-	}
-}
+	  }
+	  stage('push image') {
+		steps {
+		  script {
+			docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+               app.push("${env.BUILD_ID}")
+               app.push("latest")
+
+		    }
+		  }
+	    }
+	  }	
+	
+	  stage('Deploy to GKE') {
+		when {
+		  branch 'main'
+		}
+		steps{
+		  sh "sed -i 's/introduce_game:latest/introduce_game:${env.BUILD_ID}/g' deployment.yaml"
+		  step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME,
+location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID,
+verifyDeployments: true])
+	    }
+	  }
+   }
+}	
