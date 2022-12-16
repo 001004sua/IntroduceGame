@@ -10,13 +10,13 @@ pipeline {
     stage('Clone repository') {
       steps {
         git branch: 'develop',
-        url: 'https://github.com/GiYeons/IntroduceGame-fork.git'
+        url: 'https://github.com/001004sua/IntroduceGame-fork.git'
       }
     }
     stage('Build image') {
       steps {
    script {
-          app = docker.build("giyeonss/introduce-game:${env.BUILD_ID}")
+          app = docker.build("suajang/introduce_game:${env.BUILD_ID}")
    }
       }
     }
@@ -32,10 +32,10 @@ pipeline {
     }   
     stage('Deploy to GKE') {
       when {
-        branch 'develop'
+        branch 'main'
       }
       steps{
-   sh "sed -i 's/introduce-game:latest/introduce-game:${env.BUILD_ID}/g' Deployment.yaml"
+   sh "sed -i 's/introduce_game:latest/introduce_game:${env.BUILD_ID}/g' Deployment.yaml"
         step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'Deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
      }
    }
