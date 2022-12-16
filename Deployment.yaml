@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: intro-game
-        image: suajang/introduce_game:latest
+        image: giyeonss/introduce-game:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
