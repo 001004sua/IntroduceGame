@@ -10,7 +10,7 @@ pipeline {
     stage('Clone repository') {
       steps {
         git branch: 'develop',
-        url: 'https://github.com/001004sua/IntroduceGame-fork.git'
+        url: 'https://github.com/001004sua/IntroduceGame.git'
       }
     }
     stage('Build image') {
